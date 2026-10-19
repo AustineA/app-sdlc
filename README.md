@@ -32,6 +32,28 @@ npx github:AustineA/app-sdlc status
 npx github:AustineA/app-sdlc uninstall
 ```
 
+Then install the tools and companion skills it drives. The agent also runs this check itself at the start of a run:
+
+```bash
+bash ~/.agents/skills/app-sdlc/scripts/setup.sh            # check
+bash ~/.agents/skills/app-sdlc/scripts/setup.sh --install  # install what's missing
+bash ~/.agents/skills/app-sdlc/scripts/setup.sh --install ios screenshots store   # only some groups
+```
+
+| What | Why | Source |
+|---|---|---|
+| [Argent](https://www.npmjs.com/package/@swmansion/argent) | drives iOS simulators and Android emulators for e2e QA | `npx @swmansion/argent@latest init -y` |
+| [framecraft](https://github.com/AustineA/framecraft) + `framecraft-layer-design` skill | App Store screenshots in every locale | `npx github:AustineA/framecraft install` |
+| [app-landing-seo](https://github.com/AustineA/app-landing-seo) | landing site and SEO guides | `npx github:AustineA/app-landing-seo` |
+| [asc-locale](https://github.com/AustineA/asc-locale) | App Store metadata and localization | `npx github:AustineA/asc-locale` |
+| [testflight-upload](https://github.com/AustineA/testflight-upload) | archive and upload to TestFlight | `npx github:AustineA/testflight-upload` |
+| [play-store-publisher](https://github.com/AustineA/play-store-publisher) | Play listings, bundles and tracks | `npx github:AustineA/play-store-publisher` |
+| [aso-appstore-screenshots](https://github.com/adamlyttleapps/claude-skill-aso-appstore-screenshots) | screenshot headlines | git clone |
+| [XcodeBuildMCP](https://github.com/getsentry/XcodeBuildMCP) | iOS build/run/test | `brew tap getsentry/xcodebuildmcp && brew install xcodebuildmcp` |
+| fastlane, XcodeGen, gh, libraqm, Python libs | builds, uploads, image text | Homebrew / pip |
+
+Xcode and Android Studio (JDK, SDK, an emulator) are manual installs.
+
 ## Usage
 
 Ask your agent, for example:
@@ -52,7 +74,6 @@ python3 ~/.agents/skills/app-sdlc/scripts/audit.py <project-root> [--landing <si
 
 - Node.js 18+ (installer) and Python 3 (scripts). The Play helpers need `pip install google-auth requests pillow`.
 - Your own accounts and keys: an App Store Connect API key, a Google Play service account, RevenueCat, Firebase/GCP and Cloudflare. The skill reuses keys it finds locally, never prints secrets, and lists anything only you can do (agreements, reviewer accounts, rollouts).
-- Optional specialist skills it hands work to when they're installed: `testflight-upload`, `play-store-publisher`, `framecraft-layer-design`, `asc-locale`, `app-landing-seo`, and an emulator/simulator driver such as Argent or XcodeBuildMCP.
 
 Store changes default to the safest state: iOS goes to TestFlight only, and Android to an internal draft. Nothing is submitted for review or sent to production unless you ask.
 

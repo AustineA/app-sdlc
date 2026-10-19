@@ -9,7 +9,7 @@ This skill runs the whole path from an app in a repo to builds that testers can 
 
 You are the orchestrator. Most phases have a specialist skill; your job is to sequence them, detect what already exists, hold each phase to its verification gate, and keep a written record so a later session can resume.
 
-**Specialist skills are optional.** This skill names helpers by role, among them `testflight-upload`, `play-store-publisher`, `framecraft-layer-design`, `aso-appstore-screenshots`, `asc-locale` / `appstore-metadata`, `app-landing-seo`, and an emulator or simulator driver such as Argent or XcodeBuildMCP. Use whichever of them is installed. When one is missing, do the step directly by following the phase's reference file and the scripts in `scripts/`. Every phase can be done without them.
+**Specialist skills come from `setup.sh`, and they're optional.** This skill names helpers by role, among them `testflight-upload`, `play-store-publisher`, `framecraft-layer-design`, `aso-appstore-screenshots`, `asc-locale` / `appstore-metadata`, `app-landing-seo`, and an emulator or simulator driver such as Argent or XcodeBuildMCP. Use whichever of them is installed. When one is missing, do the step directly by following the phase's reference file and the scripts in `scripts/`. Every phase can be done without them.
 
 ## Operating principles
 
@@ -39,6 +39,7 @@ On resume, read the state file and re-run the audit. The file can be stale; the 
 
 ## Phase 0 — Audit and plan
 
+0. **Tooling.** Run `bash ~/.agents/skills/app-sdlc/scripts/setup.sh`, or use the path to this skill's `scripts/`. It reports which tools and companion skills are present: Argent, framecraft, XcodeBuildMCP, app-landing-seo, asc-locale, testflight-upload, play-store-publisher, fastlane and the rest. Once the plan below is known, install what's missing for the phases you'll actually run with `setup.sh --install <groups>`. See `references/tooling.md` for what each tool is for. If an MCP server such as Argent was just installed, tell the user to restart the agent before the QA phases.
 1. `python3 ~/.claude/skills/app-sdlc/scripts/audit.py <project-root> [--landing <dir>] [--json]`. It detects the stack, ids, versions, and evidence per phase without reading secret contents. It also reports two things that come before any phase:
    - **Hygiene problems:**
      - secrets tracked in git (rotate them, then untrack them);
