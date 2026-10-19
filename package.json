@@ -1,0 +1,31 @@
+{
+  "name": "app-sdlc",
+  "version": "1.0.0",
+  "description": "AI SDLC orchestrator that takes a mobile app from code to TestFlight and Google Play: port, auth, subscriptions, push, localization, screenshots, landing/legal, store forms and release, with a verification gate per phase",
+  "bin": {
+    "app-sdlc": "./bin/install.mjs"
+  },
+  "keywords": [
+    "ai-agent",
+    "claude-code",
+    "codex",
+    "skills",
+    "installer"
+  ],
+  "author": "AustineA",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AustineA/app-sdlc"
+  },
+  "files": [
+    "bin/",
+    "skill/",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  }
+}

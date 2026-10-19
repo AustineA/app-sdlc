@@ -1,0 +1,17 @@
+{
+ "skill_name": "app-sdlc",
+ "evals": [
+  {
+   "id": 1,
+   "prompt": "I want to get <path-to-an-expo-app> onto both stores properly - do whatever's still missing. DRY RUN: do not modify any files, do not call any API that writes, do not deploy or upload anything. Just audit it and write the full plan you would execute, phase by phase, to outputs/plan.md.",
+   "expected_output": "Audit-driven plan that skips done phases, lists verification gates, flags user-only actions",
+   "files": []
+  },
+  {
+   "id": 2,
+   "prompt": "<path-to-a-live-app> is already on the App Store and Play. We never did proper screenshots for every language or a landing page. Can you handle whatever is left to make it launch-ready? DRY RUN: no file changes, no writes to any API, no deploys. Write the plan to outputs/plan.md.",
+   "expected_output": "Skips identity/port/release basics already present, focuses on screenshots, localization, landing/legal, store forms; gates per phase",
+   "files": []
+  }
+ ]
+}
