@@ -81,6 +81,7 @@ if want android; then
   tool "adb"     "adb version" "" "install Android Studio (SDK Platform Tools), then add \$ANDROID_HOME/platform-tools to PATH"
   tool "Android emulator + an AVD" "emulator -list-avds | grep -q ." "" "Android Studio > Device Manager > create a Pixel AVD with a Play Store image"
   tool "keytool" "keytool -help" "" "comes with the JDK"
+  tool "bundletool" "bundletool version" "brew install bundletool"
 fi
 
 if want device; then

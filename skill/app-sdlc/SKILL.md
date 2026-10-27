@@ -86,8 +86,10 @@ Run them in this order. Each section lists what it **detects** (to skip it), wha
   - Port one feature at a time, in dependency order: model and storage → sync and API → core screens → secondary screens → notifications → widget → store polish.
   - After each feature, build it, run it on an emulator or simulator, and exercise it end to end before starting the next.
   - Generate strings from the source app's catalog rather than hand-translating.
+  - Port the app icon too. Expo and Flutter ship placeholder Android launcher icons, and setting the iOS icon doesn't replace them. Build the adaptive foreground and background from the iOS icon layers, with the artwork inside the 66dp safe circle (`references/app-icon.md`).
 - **Verify:**
   - Every matrix row is ticked, with how it was tested.
+  - The installed launcher icon is the real icon on an emulator's app drawer, not a template ("A", grid, robot or Flutter logo).
   - Two-device tests pass: two emulators as a couple or pair for multi-user apps, plus one cross-platform pair (Android + iOS on the same backend). Use a local backend for these tests when one exists.
 
 ### 3. Authentication → `references/auth.md`
@@ -144,6 +146,7 @@ Run them in this order. Each section lists what it **detects** (to skip it), wha
   - Build the layered set with the `framecraft-layer-design` skill (`aso-appstore-screenshots` for headlines).
   - Export every store locale.
   - For Play, reuse the iOS set cropped to at most 2:1 (Play rejects a long side more than twice the short side).
+  - Generate the Play 512×512 hi-res icon from the same composition as the Android launcher icon, and the feature graphic from that icon. Never use a separate or flattened full-bleed PNG (`references/app-icon.md`).
 - **Verify:** API reads show 6–10 screenshots per locale on both stores, and the images are the new ones.
 
 ### 8. Landing site and legal pages → `references/landing-and-legal.md`
@@ -166,12 +169,15 @@ Run them in this order. Each section lists what it **detects** (to skip it), wha
 - **Verify:**
   - API reads show every locale's text.
   - Play Console's "App content" page shows each declaration as complete. Some depend on others (target audience needs sign-in details first), so record what's blocked on the user.
+  - The listing's hi-res icon (downloaded through the API) and the release AAB's launcher icon look like the same icon under every launcher mask: `scripts/icon_check.py --aab … --store-icon …`. The launcher label is the listing title or a clear prefix of it. Otherwise Play rejects the update for "App store listing mismatch" (Misleading Claims).
   - In the final report, warn that the first App Store submission must include the subscriptions in the same submission as the version. The API can't do this; use the Draft Submissions panel. Otherwise review rejects the app under 2.1(b). When the user asks you to submit, or to fix that rejection, follow "First submission with subscriptions" in `store-forms.md`.
 
 ### 10. Release builds
 - **iOS:** use the `testflight-upload` skill. Bump the build number, archive, export and upload, then poll until the build is VALID.
 - **Android:** check `df -h /` first (about 7 GB needed), bump `versionCode` above Play's latest, build a signed AAB (the IPv4 Gradle flag is in `identity-and-signing.md`), check the signer, then upload with the `play-store-publisher` skill (or `fastlane supply --track internal --release_status draft --skip_upload_metadata ...`). Then read the track through the API. Fastlane's update banner can hide its own result.
 - **Expo:** `eas build --platform all --profile production`, then `eas submit` (or download the artifacts and use the paths above). Its credentials may live in EAS (`eas credentials`) rather than on the machine, which is not an error.
+- **Before any production release:** roll the build out on internal testing first. Install that exact AAB on an emulator (`bundletool build-apks --connected-device`, then `install-apks`), and compare the app drawer icon with the live listing icon (`scripts/icon_check.py`). Send the build and any listing-icon change for review together.
+- **If Play rejects it:** read Policy status → View details (the location and evidence image) **and** Submission activity → the submission (which release was reviewed) before changing anything. A rejected change goes back to "not yet submitted", so it looks unsent. See "Reading a rejection" in `references/app-icon.md`.
 - **Verify:** the build is VALID in TestFlight, and the version code is on the internal track as a draft.
 
 ## Things only the user can do

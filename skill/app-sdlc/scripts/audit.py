@@ -266,6 +266,13 @@ def audit(root, landing=None):
         checks.append(("ASC listing text (local)", ios_meta or None))
     if has_android:
         checks.append(("Play listing text (local)", play_meta or None))
+        # A placeholder launcher icon under a real store icon gets the update rejected (references/app-icon.md).
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from icon_check import template_hits
+        templates = template_hits(ix.root)
+        checks.append(("Android launcher icon is not a template", None if templates else "no known template files"))
+        if templates:
+            r["icon_templates"] = [f"{path}: {name}" for path, name in templates]
     r["phases"].append(phase("9 store-forms", checks,
                              ["Play app-content declarations (data safety, content rating, target audience, app access) are console-only; check Play Console > App content."]))
 

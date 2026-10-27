@@ -57,6 +57,7 @@ SwiftUI + Observation, a `Localizable.xcstrings` catalog, WidgetKit with timelin
 Use a local backend (for example Rails on `:3000`). The emulator reaches the host at `10.0.2.2`, so add a **debug-only** network security config allowing cleartext to `10.0.2.2` and `localhost`.
 
 ## Gotchas we hit
+- **The Android launcher icon is easy to forget.** Expo leaves placeholder adaptive-icon files (a blue "A", or a grey grid in older templates) and a placeholder themed (monochrome) icon. Play rejected Bee Habit for installing them under a real store icon. Its next build, with full-bleed artwork cropped by the launcher circle, was rejected too. Build both from the iOS layers inside the 66dp safe circle, and run `scripts/icon_check.py` (`app-icon.md`).
 - **Emulator IME drops characters** from automated typing. Use `adb shell input text "Hello%sworld"` and turn off `stylus_handwriting_enabled`.
 - **adb UI dumps beat stale screen streams.** Use `uiautomator dump` + `screencap` when a tool's screen stream freezes.
 - **OkHttp throws on body-less POST/PUT/PATCH.** Send `{}`.

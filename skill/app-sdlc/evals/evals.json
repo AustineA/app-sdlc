@@ -12,6 +12,12 @@
    "prompt": "<path-to-a-live-app> is already on the App Store and Play. We never did proper screenshots for every language or a landing page. Can you handle whatever is left to make it launch-ready? DRY RUN: no file changes, no writes to any API, no deploys. Write the plan to outputs/plan.md.",
    "expected_output": "Skips identity/port/release basics already present, focuses on screenshots, localization, landing/legal, store forms; gates per phase",
    "files": []
+  },
+  {
+   "id": 3,
+   "prompt": "Google Play rejected my update: 'Violation of Misleading Claims policy - App store listing mismatch: your app's installed icon or name differs from its store listing' (evidence: Hi-res icon en-US and Launch / On Device Icon). The app is <path-to-an-expo-app>. DRY RUN: no file changes, no API writes, no uploads. Write what you'd check and the fix plan to outputs/plan.md.",
+   "expected_output": "Checks Policy status evidence and Submission activity for the reviewed build; flags Expo template launcher files (icon_check.py --project) and the monochrome placeholder; plans one composition for launcher + Play hi-res icon with artwork inside the 66dp safe circle; verifies with icon_check.py --aab and an emulator install via bundletool on internal testing before replacing the production release and sending build + listing icon for review together",
+   "files": []
   }
  ]
 }

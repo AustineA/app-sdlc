@@ -12,6 +12,7 @@
 | ios | fastlane | TestFlight, `supply` | `brew install fastlane` |
 | ios | XcodeBuildMCP CLI + `xcodebuildmcp-cli` skill | build/run/test on simulators and devices | `brew tap getsentry/xcodebuildmcp && brew install xcodebuildmcp`, then `xcodebuildmcp init` |
 | android | JDK 17+, Android SDK, emulator + AVD | port, QA, release | Android Studio (manual); create a Pixel AVD with a Play Store image |
+| android | bundletool | install the exact release AAB on an emulator to check the launcher icon before production | `brew install bundletool` |
 | device | **Argent** (MCP server + argent-* skills) | e2e QA: tap, type, describe and screenshot on iOS sims and Android emulators | `npx -y @swmansion/argent@latest init -y`, then restart the agent so the MCP tools load |
 | screenshots | **framecraft** CLI + `framecraft-layer-design` skill | layered App Store screenshots for every locale | `npx -y github:AustineA/framecraft install` (installs both) |
 | screenshots | `aso-appstore-screenshots` skill | benefit-led headlines | cloned from github.com/adamlyttleapps/claude-skill-aso-appstore-screenshots |

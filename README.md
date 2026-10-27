@@ -70,6 +70,13 @@ To see the phase table on its own (read-only):
 python3 ~/.agents/skills/app-sdlc/scripts/audit.py <project-root> [--landing <site-dir>] [--json]
 ```
 
+Before a Play production release, check that the installed launcher icon matches the store icon (Play rejects mismatches as "App store listing mismatch"):
+
+```bash
+python3 ~/.agents/skills/app-sdlc/scripts/icon_check.py --aab app-release.aab --store-icon icon-512.png --out icon-check.png
+python3 ~/.agents/skills/app-sdlc/scripts/icon_check.py --project <project-root>   # flags Expo placeholder icons
+```
+
 ## Requirements
 
 - Node.js 18+ (installer) and Python 3 (scripts). The Play helpers need `pip install google-auth requests pillow`.
