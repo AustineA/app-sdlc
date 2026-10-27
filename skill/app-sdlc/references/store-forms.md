@@ -18,6 +18,22 @@
 - Test the iPad compatibility window even for an iPhone-only app.
 - Attach the build and submit only when the user asks.
 
+### First submission with subscriptions
+Submitting the version alone gets rejected under **2.1(b) App Completeness** ("the app includes references to subscriptions but the associated In-App Purchase products have not been submitted"), and Apple then wants a new binary too. The first subscriptions can only be submitted inside the same review submission as an app version, and only from the web UI:
+- The API can't do it. `POST /v1/subscriptionSubmissions` returns `FIRST_SUBSCRIPTION_MUST_BE_SUBMITTED_ON_VERSION`, and `reviewSubmissionItems` has no `subscription` relationship. Use the browser (Argent on CDP 9222).
+- The version page no longer has an "In-App Purchases and Subscriptions" section. Items are collected in the **Draft Submissions** panel (bottom right) instead:
+  1. Version page → **Add for Review** → pick the existing draft.
+  2. Subscriptions → the group → **Add for Review** into the same draft.
+  3. Open **each** subscription and **Add for Review** into the same draft. With only the group added, the panel says "New subscription groups must be submitted with an auto-renewable subscription from within that group".
+  4. When the panel lists version + group + subscriptions and shows no warning, **Submit for Review**.
+- Verify through the API: the version and every subscription read `WAITING_FOR_REVIEW`.
+
+### Recovering from that rejection
+1. Bump the build number, build and upload (`testflight-upload`), wait for VALID, then attach it to the version (`PATCH /v1/appStoreVersions/<id>/relationships/build`).
+2. The rejected submission (`UNRESOLVED_ISSUES`) holds the version and can't take subscriptions. "Update Review" only swaps the build. Resubmitting it as it is would be rejected again.
+3. Open that submission and click **Cancel Submission** → Confirm. Wait until it reads `COMPLETE` and the version reads `DEVELOPER_REJECTED`.
+4. Then follow the steps above, adding everything into one draft. A draft holding only the group says "add an app version for the selected platform" until the version is in it.
+
 ## Google Play listing (API)
 - Generate per-locale `title` (30 characters), `short_description` (80) and `full_description` (4000) from the ASC listing. Replace Apple-specific paragraphs (billing, Apple ID) with Google Play equivalents, and write your own 80-character short descriptions.
 - Upload through the Publishing API: one edit, `PATCH details` (default language, contact email and website), then `PUT listings/<locale>` for each, then commit. `fastlane supply` metadata upload fails with "Could not find release for version code" while production has no release.

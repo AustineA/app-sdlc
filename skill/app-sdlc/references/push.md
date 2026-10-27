@@ -8,6 +8,9 @@
 - Verification
 - Gotchas
 
+## First: does the app need remote push?
+Grep for push-token registration (`getDevicePushTokenAsync`, `getExpoPushTokenAsync`, `FirebaseMessaging`, `onNewToken`) and for server-side sending. If the app only schedules local notifications, mark the phase skipped: FCM and `google-services.json` are not needed.
+
 ## Design
 - Anything that can be scheduled on the device should be a **local** notification: daily reminders, "opens tomorrow", "it's time". Both partners' phones fire at the same moment without a server.
 - Server pushes are only for things other people do ("Jonah added a note"). Never put private content in the push text, and rate-limit per recipient (for example 1 per hour).

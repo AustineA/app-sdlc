@@ -28,6 +28,13 @@ Set up OAuth in the Google Cloud project. Reuse the Firebase project's GCP proje
 
 Keep the web client id in gitignored config (for example `local.properties` → `BuildConfig`).
 
+**Check that client ids already in the code belong to this app.** Open each id in the Clients list and compare its package name and SHA-1. A client copied from a sibling app (same GCP project, different package) fails silently on device. Create the right client instead of trusting the code.
+
+The consent screen can only be published once Branding has a home page URL, privacy and terms URLs, and every domain those URLs use under Authorized domains (Notion legal pages need their `*.notion.site` subdomain too). Fill these first; otherwise "Publish app" stays greyed out.
+
+### Expo / React Native
+- **`expo-auth-session`'s Google provider on Android relies on a custom-scheme redirect.** New Android OAuth clients have no "custom URI scheme" toggle under Advanced settings, and Google blocks those redirects, so the browser flow fails on a fresh client. Use `@react-native-google-signin/google-signin`, which goes through Credential Manager, with `webClientId` set to the **web** client id. Send the ID token to the backend. An existing app on `expo-auth-session` needs this migration before Google sign-in on Android counts as verified. Flag it in the report, and don't claim the auth gate passed.
+
 ## Backend
 - Verify Google ID tokens against Google's certs with `aud` = web client id (in Rails: `Google::Auth::IDTokens.verify_oidc`). Verify Apple tokens against Apple's JWKS with `aud` = bundle id.
 - Store provider subject ids in separate columns (`apple_user_id`, `google_user_id`, both nullable and unique) plus an index on `lower(email)`.

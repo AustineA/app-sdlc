@@ -13,9 +13,10 @@ You are the orchestrator. Most phases have a specialist skill; your job is to se
 
 ## Operating principles
 
+0. **Run end to end without asking.** Once the plan is shown, carry out every phase yourself. Don't stop to offer option lists, ask "should I proceed?", or write blocker reports for things you can do in the browser. When a key gets a 403, try the other keys. When a console step has no API, do it in the user's browser. Stop only for the items in "Things only the user can do". If the browser needs a re-login, send the user the URL and keep going with other work.
 1. **Audit before acting.** Run `scripts/audit.py <project>` first. Phases it reports `done` are skipped (spot-check one piece of evidence; don't redo them). `partial` means finish only the missing pieces. This is what makes the skill safe to call on a half-shipped app: "app exists, no screenshots" should go straight to screenshots and whatever else is missing.
 2. **Gate every phase.** A phase is finished only when its "Verify" evidence exists: a real sign-in, a push that arrived, an API read showing the build on the track. Logs that say "uploaded" don't count. Record the evidence in the state file. If a gate fails, fix it before starting the next phase. Later phases build on earlier ones (screenshots need a working app, store forms need the legal URLs).
-3. **Prefer APIs and CLIs over clicking**, and the browser over asking the user. Use the order App Store Connect API → Google Play Developer API → RevenueCat API (or its internal API from a logged-in page) → driving the user's browser over CDP. Hand a step to the user only when a console truly has no other way (see "Things only the user can do").
+3. **Prefer APIs and CLIs over clicking**, and the browser over asking the user. Use the order App Store Connect API → Google Play Developer API → RevenueCat API (or its internal API from a logged-in page) → driving the user's browser with **Argent on CDP port 9222**. Bash Playwright and raw-CDP scripts get blocked; see `references/browser-automation.md`. Hand a step to the user only when a console truly has no other way (see "Things only the user can do").
 4. **Look for existing credentials before asking.** Check `~/.config/google-play/`, `~/.config/<app>/`, macOS Keychain, `~/.gradle/gradle.properties`, gitignored `*.local.*`/`local.properties`/`.asc-config.json`/`.play-config.json`, the project's memory, and past sessions (`~/.claude/projects/*/`, `~/.codex/sessions/`) for commands that worked. Reuse an app-scoped key from a sibling app on the same developer account before creating a new one.
 5. **Secrets stay out of output and git.** Read them into shell variables inline (`PW=$(security find-generic-password -s '<App> Android Upload' -a upload_password -w)`), never echo them, and keep key files outside the repo, git-ignored.
 6. **Store mutations default to the safest state.** iOS goes to TestFlight only. Never submit for review or attach a build to a version unless asked. Android goes to the internal track as a `draft`. Never touch production or rollouts unless the user explicitly asks. Respect any project memory that says "don't upload unless asked" or "I deploy the backend myself". When a backend change is needed, finish and test it locally, then tell the user it's ready to deploy, if that's their rule.
@@ -71,7 +72,7 @@ Run them in this order. Each section lists what it **detects** (to skip it), wha
   - Register the App ID and its capabilities through the ASC API.
   - Create the ASC app record.
   - Create the Android upload keystore, with its password in the Keychain.
-  - Create the Play app. That needs the console, plus a first manual AAB upload, and app signing must be enrolled.
+  - Create the Play app in the user's browser, grant the existing publisher service account access to it (Users and permissions → Add app), then upload the first AAB with `fastlane supply` as an internal draft. Play App Signing gets enrolled on that upload.
 - **Verify:**
   - An ASC API read returns the app.
   - A package-scoped Play API read succeeds (an edit insert followed by a track read).
@@ -93,7 +94,8 @@ Run them in this order. Each section lists what it **detects** (to skip it), wha
 - **Detect:** Sign in with Apple and Google sign-in code; OAuth clients; backend verifiers; account linking.
 - **Do:**
   - Sign in with Apple must request the `email` scope, or there's nothing to link on.
-  - For Google sign-in, set up the OAuth consent screen (production), a web client (its id is the server's audience), and Android clients for the **debug, upload and Play app-signing** SHA-1s.
+  - For Google sign-in, set up the OAuth consent screen and publish it to production. Branding needs the URLs and authorized domains first. Create a web client (its id is the server's audience) and Android clients for the **Play app-signing** SHA-1, plus the upload and debug SHA-1s if local builds must sign in. Check that any client id already in the code belongs to this package.
+  - Expo apps on `expo-auth-session` Google need migrating to `@react-native-google-signin/google-signin`, because new Android clients reject custom-scheme redirects. See `references/auth.md`.
   - Add backend token verification.
   - Link accounts by provider-verified email, so the same person gets the same data on both platforms.
   - A returning account skips onboarding and the paywall.
@@ -164,10 +166,11 @@ Run them in this order. Each section lists what it **detects** (to skip it), wha
 - **Verify:**
   - API reads show every locale's text.
   - Play Console's "App content" page shows each declaration as complete. Some depend on others (target audience needs sign-in details first), so record what's blocked on the user.
+  - In the final report, warn that the first App Store submission must include the subscriptions in the same submission as the version. The API can't do this; use the Draft Submissions panel. Otherwise review rejects the app under 2.1(b). When the user asks you to submit, or to fix that rejection, follow "First submission with subscriptions" in `store-forms.md`.
 
 ### 10. Release builds
 - **iOS:** use the `testflight-upload` skill. Bump the build number, archive, export and upload, then poll until the build is VALID.
-- **Android:** bump `versionCode` above Play's latest, build a signed AAB, check the signer, then upload with the `play-store-publisher` skill (or `fastlane supply --track internal --release_status draft --skip_upload_metadata ...`). Then read the track through the API. Fastlane's update banner can hide its own result.
+- **Android:** check `df -h /` first (about 7 GB needed), bump `versionCode` above Play's latest, build a signed AAB (the IPv4 Gradle flag is in `identity-and-signing.md`), check the signer, then upload with the `play-store-publisher` skill (or `fastlane supply --track internal --release_status draft --skip_upload_metadata ...`). Then read the track through the API. Fastlane's update banner can hide its own result.
 - **Expo:** `eas build --platform all --profile production`, then `eas submit` (or download the artifacts and use the paths above). Its credentials may live in EAS (`eas credentials`) rather than on the machine, which is not an error.
 - **Verify:** the build is VALID in TestFlight, and the version code is on the internal track as a draft.
 
@@ -176,12 +179,12 @@ Run them in this order. Each section lists what it **detects** (to skip it), wha
 Collect these in `user_actions` and in the final report. Give the exact console path for each.
 
 - Accepting agreements: Paid Apps in App Store Connect, payments profile in Play Console.
-- Creating the Play app, if the API can't.
-- Granting a service account access to an app in Play Console, under Users and permissions.
 - Reviewer sign-in credentials, using a real account that has Pro.
 - Rolling out a draft, and submitting for review.
 - Deploying the backend, if their rule says so.
-- Anything that requires 2FA in the browser.
+- Anything that requires 2FA or a password in the browser. Send them the exact URL.
+
+Creating the Play app, granting the service account access, creating OAuth clients and publishing the consent screen are **not** on this list. Do them in the browser.
 
 ## Final report
 

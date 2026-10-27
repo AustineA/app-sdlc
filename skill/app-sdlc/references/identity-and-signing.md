@@ -31,9 +31,14 @@
     -Pandroid.injected.signing.key.password="$PW"
   keytool -printcert -jarfile app/build/outputs/bundle/release/app-release.aab | grep SHA1
   ```
-- Play app: create it in Play Console (the API can't). Enrol Play App Signing. Upload the first AAB (the internal track is fine). After that everything goes through the API.
-- Record both SHA-1s, the **upload** certificate and Play's **app signing** certificate (Play Console → Test and release → App integrity). Google sign-in needs an Android OAuth client for each, plus one for the debug keystore.
-- API access: a service-account JSON with Play permissions for this app. Reuse one from a sibling app on the same developer account if a package-scoped read proves it has access. When one key returns 403, try the account's other publisher keys before asking the user to grant access (Users and permissions → the service account → App permissions: view app information, release to testing tracks, manage store presence).
+- Play app: the API can't create it, so create it yourself in the user's browser (see `browser-automation.md` → "Play create app"). If every publisher key returns **"Package not found"**, the app doesn't exist yet. That isn't a permissions problem.
+- API access: then grant an existing publisher service account access to the new app yourself, through Users and permissions → Add app (see `browser-automation.md`). Reuse the account's existing publisher key. When one key returns 403, try the account's other keys. Once the grant is in, **the first AAB can go up through `fastlane supply` to the internal track as a draft**, so no manual upload is needed. Play App Signing is enrolled by default on that first upload; check it on the App signing page.
+- Record both SHA-1s, the **upload** certificate (from `keytool`) and Play's **app signing** certificate (Test and release → App integrity → App signing, read with the copy button and `pbpaste`). Google sign-in needs an Android OAuth client for the Play app-signing key at least. Add the upload key and the debug keystore when local builds must sign in too.
+
+## Build machine
+- **Check `df -h /` before building.** An Expo/RN release build needs about 7 GB free (Gradle caches, CMake, the AAB). If space is short, clear regenerable caches first (Xcode DerivedData, `~/.gradle/caches`, npm and pnpm caches) with the `reclaim-disk-space` skill. Don't run `uv cache clean`, which can hang.
+- If Gradle fails with **"Can't assign requested address"**, add `-Dorg.gradle.jvmargs="-Xmx4g -Djava.net.preferIPv4Stack=true"`.
+- Expo CNG: run `npx expo prebuild --clean -p android --no-install`, then `NODE_ENV=production ./gradlew :app:bundleRelease` from `android/` with the injected signing flags above. The AAB is at `android/app/build/outputs/bundle/release/app-release.aab`. Copy it to `.release/<slug>-<versionCode>.aab`. Set `expo.android.versionCode` in `app.json`; with no value, every build is versionCode 1.
 
 ## Gotchas
 - A Play `versionCode` can never be reused, even from a deleted draft. Always read the track's latest first, then bump above it.
