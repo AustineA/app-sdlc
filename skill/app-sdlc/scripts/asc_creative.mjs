@@ -114,8 +114,14 @@ for (const locale of LOCALES) {
       console.log("placed", a.key, a.placement, p.id);
     }
     // verify: placements read back by id (the localization has no placements relationship to list)
+    // A video placement stays PENDING until Apple finishes its preview frame (~10 min); wait up to 20.
     for (const k of Object.keys(ids).filter((k) => k.endsWith("-placement"))) {
-      const at = (await api("GET", `/v1/appAssetLibraryPlacements/${ids[k]}`)).data.attributes;
+      let at;
+      for (let i = 0; i < 40; i++) {
+        at = (await api("GET", `/v1/appAssetLibraryPlacements/${ids[k]}`)).data.attributes;
+        if (at.state !== "PENDING" || process.env.NO_WAIT) break;
+        await new Promise((r) => setTimeout(r, 30000));
+      }
       console.log("verify", k, at.placementType, at.state);
       if (at.state !== "ACTIVE") failures++;
     }

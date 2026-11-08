@@ -37,3 +37,9 @@ html, body { margin: 0; overflow: hidden; background: var(--char); }
   color: #3b342d; letter-spacing: .08em; text-transform: uppercase; }
 .print .label { bottom: calc(var(--w) * .065); font-size: calc(var(--w) * .07); }
 .bare .label { bottom: calc(var(--w) * .07); font-size: calc(var(--w) * .07); }
+/* pixel faces for scripts VCR lacks (kit/fusion, OFL) */
+@font-face { font-family: FusionLatin; src: url('kit/fusion/fusion-pixel-12px-monospaced-latin.ttf.woff2'); }
+@font-face { font-family: FusionJA; src: url('kit/fusion/fusion-pixel-12px-monospaced-ja.ttf.woff2'); }
+@font-face { font-family: FusionKO; src: url('kit/fusion/fusion-pixel-12px-monospaced-ko.ttf.woff2'); }
+@font-face { font-family: FusionSC; src: url('kit/fusion/fusion-pixel-12px-monospaced-zh_hans.ttf.woff2'); }
+@font-face { font-family: FusionTC; src: url('kit/fusion/fusion-pixel-12px-monospaced-zh_hant.ttf.woff2'); }

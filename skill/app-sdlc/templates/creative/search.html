@@ -11,9 +11,9 @@
 <div class="desk">
   <!-- headline, top left, on its own pool of shade -->
   <div class="scrim t" style="left:20px; top:20px; width:1060px; height:620px"></div>
-  <div class="o eyebrow t" style="left:110px; top:128px; z-index:60; font-size:24px">Last Summer / Vintage Camera</div>
-  <div class="o headline t" style="left:104px; top:172px; z-index:60; font-size:116px">Make tonight<br>a <span class="hot">throwback.</span></div>
-  <div class="o stamp t" style="left:110px; top:430px; z-index:60; font-size:30px">Retro looks for nights with your people</div>
+  <div data-copy="eyebrow" data-max="790" class="o eyebrow t" style="left:110px; top:128px; z-index:60; font-size:24px">Last Summer / Vintage Camera</div>
+  <div data-copy="headline" data-max="790" class="o headline t" style="left:104px; top:172px; z-index:60; font-size:116px">Make tonight<br>a <span class="hot">throwback.</span></div>
+  <div data-copy="sub" data-max="790" class="o stamp t" style="left:110px; top:430px; z-index:60; font-size:30px">Retro looks for nights with your people</div>
   <div class="o stamp t" style="left:110px; top:494px; z-index:60; font-size:58px; letter-spacing:.12em">08 11 '98</div>
 
   <!-- lower left: the kit -->
@@ -29,6 +29,7 @@
   <div class="o print lift p" id="pr4" style="--w:340px; left:1500px; top:770px; transform:rotate(8deg)"><img src="photos/bus-night.jpg"><span class="label">Night Vision</span></div>
   <img class="o lift p" id="can3" src="kit/can-red.png" style="left:930px; top:1060px; width:140px; transform:rotate(84deg)">
 </div>
+<script src="copy.js"></script>
 <script>
 // Layer mode for build_video.py: ?only=<id>|desk|type renders one piece alone on a transparent page,
 // &src=<photo> &label=<text> swap the photo and chin label of that print.
@@ -42,7 +43,7 @@ if (only) {
     if (!keep && !(only === "desk" && el.classList.contains("scrim"))) el.style.display = "none";
   }
   const el = document.getElementById(only);
-  if (el && q.get("src")) el.querySelector("img").src = "photos/" + q.get("src") + ".jpg";
+  if (el && q.get("src")) el.querySelector("img").src = window.photoDir + q.get("src") + ".jpg";
   if (el && q.get("label")) el.querySelector(".label").textContent = q.get("label");
 }
 </script>

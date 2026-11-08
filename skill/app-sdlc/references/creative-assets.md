@@ -74,11 +74,24 @@ Folder: `<project>/appstore/creative/` (sources, committed) and `<project>/appst
    white/black difference matte for type and real app frames from the simulator.
 5. **QC**: a timeline contact sheet (frames at ~0.2, 1, 2, 3.5, switch points, exit, last) and the
    iPhone header crop. Show the user en-US first; localize only after approval.
-6. **Locales**: per-locale copy (headline lines, note) in a `copy.js` keyed by ASC locale, with faces
-   per script (ru Baskerville, ar DecoType Naskh, hi ITF Devanagari, ja Hiragino Mincho, ko AppleMyungjo,
-   zh PingFang) and `data-max` auto-shrink. Render to `creative-export/<locale>/`. Brand and film names
-   stay English. Use ASC's locale codes (`it`, `tr`, `ru`, `hi`, `ja`, `ko`, …: read them from the
-   version's localizations, they are not all `xx-YY`).
+6. **Locales** (`templates/creative/copy.js`, loaded by both comps, driven by `?loc=<ASC locale>`):
+   - Copy keyed by **ASC locale codes** (`it`, `tr`, `ru`, `hi`, `ja`, `ko`, `id`, `vi`, `th`, … are bare;
+     read them from the version's localizations). Adapt headline 1 of the approved screenshot
+     translations; write only the locales the screenshots never had. Mark the accent word with `*…*`.
+   - **Check glyph coverage of the display face first** (fontTools cmap vs the uppercase copy). A pixel
+     face like VCR OSD Mono covers Basic Latin + Latin-1 only. Fusion Pixel (OFL, TakWolf/fusion-pixel-font,
+     12px monospaced woff2) keeps the pixel look for Latin Extended (tr, ro, pl), Cyrillic, ja, ko and
+     zh-Hans/Hant; vi needs a face with precomposed Vietnamese (Monaco); th Ayuthaya; ar Geeza Pro,
+     hi Kohinoor Devanagari. Serif brands (Grain): ru Baskerville, ar DecoType Naskh, hi ITF Devanagari,
+     ja Hiragino Mincho, ko AppleMyungjo, zh PingFang.
+   - Set `<html lang>` per locale (Turkish uppercase needs `lang="tr"` for İ). Arabic: `dir=rtl`,
+     right-aligned within the headline box.
+   - `data-max` auto-shrink per line, then **re-flow the lines under the headline with en-US's gaps**
+     (a shrunk headline otherwise leaves a hole above the subline).
+   - Regional casts per storefront when the screenshots have them (swap `photos/` → `photos/<region>/`);
+     a region missing a hero variant cycles fewer films.
+   - en-US (no `?loc`) is never touched, so the approved render stays byte-for-byte the same.
+   - Brand and product names (film names, app name) stay English.
 
 ## Upload (`scripts/asc_creative.mjs`)
 ```
@@ -96,6 +109,10 @@ node … --project <root> --version 1.5.0 --dir appstore/creative-export        
 ## Verify
 - The script's final check reads every placement back with `GET /v1/appAssetLibraryPlacements/<id>`
   and expects `state: ACTIVE` (the localization has no placements relationship: that path 404s).
+- Headers go ACTIVE at once. **Video placements stay PENDING ~10–15 min** while Apple renders the
+  preview frame (the video asset says `state: COMPLETE` but `previewFrameImage.state: PROCESSING`);
+  the script waits up to 20 min per video. That's processing, not a failure.
+- Per-locale uploads of ~40 MB × 23 locales took ~10 minutes.
 - Look at the version in App Store Connect once (Product Page → creative assets) for the first locale.
 
 ## Lessons

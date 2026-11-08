@@ -24,13 +24,17 @@ CHROME = sorted(glob.glob(os.path.expanduser(
 
 # The hero print's films, in order. Same diner shot, developed through each in the app.
 HERO = [("diner-gold", "Gold Snap"), ("diner-lux", "35 Lux"), ("diner-digital", "Early Digital")]
+# Regional casts (copy.js REGION) have no 35 Lux diner capture: their hero alternates two films.
+REGIONAL = {"ja", "ko", "zh-Hans", "zh-Hant", "vi", "th", "es-MX", "pt-BR", "hi", "id", "ar-SA"}
+if LOCALE in REGIONAL:
+    HERO = [HERO[0], HERO[2]]
 
 
 def shoot(name, query):
     path = os.path.join(LAY, name + ".png")
     if not os.path.exists(path):
         os.makedirs(LAY, exist_ok=True)
-        url = f"file://{HERE}/search.html?{query}"
+        url = f"file://{HERE}/search.html?{query}&loc={LOCALE}"
         subprocess.run([CHROME, "--headless", "--hide-scrollbars", "--force-device-scale-factor=1",
                         "--default-background-color=00000000", "--allow-file-access-from-files",
                         f"--window-size={W},{H}", "--virtual-time-budget=4000", f"--screenshot={path}", url],
