@@ -1,0 +1,48 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Last Summer search results asset</title>
+<link rel="stylesheet" href="desk.css">
+<style>
+  html, body, .desk { width: 1920px; height: 1280px; }
+  .desk { background-image: url(kit/plate-search.jpg); }
+  /* layers.html reuses this file: #desk shows only the table, #type only the type */
+  body.desk-only .t, body.desk-only .p { display: none; }
+</style>
+<div class="desk">
+  <!-- headline, top left, on its own pool of shade -->
+  <div class="scrim t" style="left:20px; top:20px; width:1060px; height:620px"></div>
+  <div class="o eyebrow t" style="left:110px; top:128px; z-index:60; font-size:24px">Last Summer / Vintage Camera</div>
+  <div class="o headline t" style="left:104px; top:172px; z-index:60; font-size:116px">Make tonight<br>a <span class="hot">throwback.</span></div>
+  <div class="o stamp t" style="left:110px; top:430px; z-index:60; font-size:30px">Retro looks for nights with your people</div>
+  <div class="o stamp t" style="left:110px; top:494px; z-index:60; font-size:58px; letter-spacing:.12em">08 11 '98</div>
+
+  <!-- lower left: the kit -->
+  <img class="o lift2 p" id="cam" src="kit/disposable.png" style="left:40px; top:720px; width:560px; transform:rotate(-9deg)">
+  <img class="o lift p" id="can1" src="kit/can-orange.png" style="left:640px; top:900px; width:150px; transform:rotate(58deg)">
+  <img class="o lift p" id="can2" src="kit/can-teal.png" style="left:560px; top:1080px; width:140px; transform:rotate(-24deg)">
+  <img class="o lift p" id="neg" src="kit/negative.png" style="left:-60px; top:1040px; width:520px; transform:rotate(-6deg)">
+
+  <!-- right: the prints, straight out of the app -->
+  <div class="o print lift p" id="pr1" style="--w:400px; left:990px; top:118px; transform:rotate(-9deg)"><img src="photos/steps-leak.jpg"><span class="label">Gold Snap</span></div>
+  <div class="o print lift2 p" id="pr2" style="--w:450px; left:1362px; top:40px; transform:rotate(5deg)"><img src="photos/dance-home-video.jpg"><span class="label">Home Video</span></div>
+  <div class="o bare lift2 p" id="pr3" style="--w:360px; left:1080px; top:740px; transform:rotate(-5deg)"><img src="photos/rooftop-instant.jpg"><span class="label">Instant Fade</span></div>
+  <div class="o print lift p" id="pr4" style="--w:340px; left:1500px; top:770px; transform:rotate(8deg)"><img src="photos/bus-night.jpg"><span class="label">Night Vision</span></div>
+  <img class="o lift p" id="can3" src="kit/can-red.png" style="left:930px; top:1060px; width:140px; transform:rotate(84deg)">
+</div>
+<script>
+// Layer mode for build_video.py: ?only=<id>|desk|type renders one piece alone on a transparent page,
+// &src=<photo> &label=<text> swap the photo and chin label of that print.
+const q = new URLSearchParams(location.search), only = q.get("only");
+if (only) {
+  document.documentElement.style.background = document.body.style.background = "transparent";
+  const desk = document.querySelector(".desk");
+  if (only !== "desk") desk.style.background = "transparent";
+  for (const el of desk.children) {
+    const keep = only === "desk" ? false : only === "type" ? el.classList.contains("t") && !el.classList.contains("scrim") : el.id === only;
+    if (!keep && !(only === "desk" && el.classList.contains("scrim"))) el.style.display = "none";
+  }
+  const el = document.getElementById(only);
+  if (el && q.get("src")) el.querySelector("img").src = "photos/" + q.get("src") + ".jpg";
+  if (el && q.get("label")) el.querySelector(".label").textContent = q.get("label");
+}
+</script>

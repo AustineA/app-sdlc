@@ -177,7 +177,12 @@ def audit(root, landing=None):
     rc_android_key = ix.grep(r"goog_[A-Za-z0-9]{10,}", limit=1) or ix.grep(r"revenuecatKey|REVENUECAT_KEY", limit=1)
     paywall = [f for f in ix.grep(r"[Pp]aywall", exts={".swift", ".kt", ".tsx", ".ts", ".dart"}, limit=12)
                if not re.search(r"[Tt]est", f)][:3]
+    # Test Store key for debug/simulator builds; .env* files have no code suffix.
+    rc_test_key = ix.grep(r"\btest_[A-Za-z0-9]{20,}|RC_TEST_API|REVENUECAT_API_KEY\[config=Debug\]",
+                          exts=CODE_EXT | {"", ".development", ".local", ".debug"}, limit=1)
     checks = [("RevenueCat SDK", rc), ("paywall UI", paywall)]
+    if rc:
+        checks.append(("RevenueCat Test Store key (test_) for debug builds", rc_test_key))
     if has_ios:
         checks.append(("RevenueCat iOS key (appl_) in config", rc_ios_key))
     if has_android:
@@ -227,8 +232,11 @@ def audit(root, landing=None):
         checks.append(("iOS screenshot set (FrameCraft or fastlane)", fc_exports or fastlane_ios_shots or framecraft or None))
     if has_android:
         checks.append(("Play screenshots (local)", play_shots or (fc_exports and ["reuse FrameCraft exports cropped to 2:1"]) or None))
+    creative = sorted({p.parent.name for p in ix.root.rglob("creative-export/*/header.png") if "node_modules" not in p.parts})
+    if has_ios:
+        checks.append(("iOS 27 creative assets (header + search, phase 7b)", creative or None))
     r["phases"].append(phase("7 screenshots", checks,
-                             [f"FrameCraft locales exported: {len(fc_exports)}"] + (["What's live in the stores needs an API read."])))
+                             [f"FrameCraft locales exported: {len(fc_exports)}", f"Creative-asset locales built: {len(creative) if has_ios else 0} (upload state: scripts/asc_creative.mjs --dry-run)"] + (["What's live in the stores needs an API read."])))
 
     # ---- 8 Landing & legal ---------------------------------------------------------------
     cands = [Path(landing)] if landing else [p for p in ix.root.parent.iterdir()

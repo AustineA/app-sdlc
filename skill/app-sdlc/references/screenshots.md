@@ -19,7 +19,7 @@
 
 ## App Store upload
 - Use the `appstore-screenshots` or `asc-locale` skill: APP_IPHONE_67 screenshot sets per version localization (delete the old set first, then upload, then commit through the reservation flow).
-- Optional iOS 27 product page header and search-result assets: `POST /v1/appAssetLibraryImages` (category CREATIVE_ASSETS), then placements on the version localization.
+- iOS 27 product page header and search-results assets are their own phase (7b): see `creative-assets.md` and `scripts/asc_creative.mjs`.
 
 ## Google Play upload
 - **Reuse the iOS set.** Play rejects images whose long side is more than 2× the short side, and 1320×2868 is 2.17. Crop to 1320×2640 from the top when the phone runs off the bottom of the frame (check one first). Otherwise pad.

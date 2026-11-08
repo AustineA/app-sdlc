@@ -107,16 +107,19 @@ Run them in this order. Each section lists what it **detects** (to skip it), wha
   - Sign-out followed by sign-in restores the data.
 
 ### 4. Monetization → `references/monetization.md`
-- **Detect:** subscription products in ASC and Play; a RevenueCat project, apps, entitlement and offering; the SDK wired in; a webhook; a server-side Pro check.
+- **Detect:** subscription products in ASC and Play; a RevenueCat project, apps, entitlement and offering; the SDK wired in; a **Test Store `test_` key used by debug builds**; a webhook; a server-side Pro check.
 - **Do:**
   - Create the subscription group and products in ASC through the API.
   - Create the Play subscriptions with base plans and the trial offer through the API (`convertRegionPrices`).
   - In RevenueCat: create the project, an app per store, import the products, attach them to the entitlement, add packages to the default offering, and set up the webhook to the backend.
+  - **Always set up the RevenueCat Test Store for debug and simulator builds.** Create Test Store products with the real product ids, give each a price, attach them to the entitlement and to every offering the app reads, and wire the `test_` key so only debug builds use it. Release builds keep `appl_`/`goog_`. Use the internal API from the user's signed-in browser (`browser-automation.md`). This applies when monetization is otherwise `done` too: add the Test Store if it's missing.
+  - Hold the account-identity rules: one account id for RevenueCat and the backend, one shared sign-in helper, and a restore that calls `restorePurchases()` and never signs in with `originalAppUserId`. See "Account identity, restore and sign-in".
   - Add a server Pro check that asks RevenueCat when the webhook hasn't arrived yet.
   - No paywall in Android onboarding (Play policy). Gate the paid action instead.
 - **Verify:**
+  - **Test Store on a simulator (Argent):** onboarding → paywall → *Test valid purchase* unlocks the app and leaves the paywall. Relaunch stays Pro. Sign out → Restore comes back Pro in Settings. Run once against the production backend from a fresh simulator.
   - Offerings load in a sandbox build on each platform.
-  - A real or sandbox purchase works, and so does restore.
+  - A real or sandbox purchase works, and so does restore on a reinstall (the Test Store can't test this one).
   - A webhook test returns 200.
   - A lapsed state is handled softly: content stays readable and the paid action prompts.
 
@@ -148,6 +151,15 @@ Run them in this order. Each section lists what it **detects** (to skip it), wha
   - For Play, reuse the iOS set cropped to at most 2:1 (Play rejects a long side more than twice the short side).
   - Generate the Play 512×512 hi-res icon from the same composition as the Android launcher icon, and the feature graphic from that icon. Never use a separate or flattened full-bleed PNG (`references/app-icon.md`).
 - **Verify:** API reads show 6–10 screenshots per locale on both stores, and the images are the new ones.
+
+### 7b. iOS 27 creative assets (product page header + search results) → `references/creative-assets.md`
+- **Detect:** `appstore/creative-export/<locale>/{header.png,search.png,search.mp4}`; ids in its `creative.json`; placements on the editable version (`scripts/asc_creative.mjs --dry-run` lists what each locale has).
+- **Do:**
+  - One scene for all three assets, built from the app's real output (screenshot-campaign captures or rendered frames) plus a few props, with headline 1 of the approved screenshot copy. Start from `templates/creative/` (HTML comps rendered @2x with the headless shell, `build_video.py` for the loop).
+  - Generate the plate and props with Sume (dry-run first, about 3 calls): one top-down 3:2 plate cropped for both canvases, plus one transparent prop sheet split into pieces.
+  - Header 3840×1646 with the headline and hero inside the iPhone band (x 345–1575 of 1920). Search: 3840×2560 still plus a 1920×1280 30 fps 15–30 s silent loop that starts and ends on the bare scene.
+  - **Build en-US first and get the user's approval**, then do every locale (copy and faces per script), then upload with `node scripts/asc_creative.mjs --project <root> --version <x.y.z> --dir appstore/creative-export`.
+- **Verify:** the iPhone crop and a video timeline contact sheet were reviewed; the script's final check reads each placement back as `ACTIVE` for every locale. Never submit the version.
 
 ### 8. Landing site and legal pages → `references/landing-and-legal.md`
 - **Detect:** landing repo or Worker; live URL; privacy, terms, support and delete-account pages; whether those pages name every platform and data processor; locale coverage.

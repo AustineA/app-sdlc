@@ -1,0 +1,39 @@
+/* "Last summer, developed": real prints from the app's film shaders on a dark table in late sun.
+   Authored in CSS px at half size; rendered at device scale 2. Plate and props come from Sume
+   (gen/), photos are campaign-v10 shader captures. */
+@font-face { font-family: VCR; src: url('kit/vcr.ttf'); }
+
+:root { --orange: #FF8C00; --char: #1A1A1C; --paper: #F4EFE6; }
+* { box-sizing: border-box; }
+html, body { margin: 0; overflow: hidden; background: var(--char); }
+.desk { position: relative; overflow: hidden; background: var(--char) center / cover no-repeat; }
+/* a soft darkening behind the type so it reads on the lit stripes */
+.scrim { position: absolute; pointer-events: none; z-index: 5;
+  background: radial-gradient(closest-side, rgba(10,9,9,.86), rgba(10,9,9,.55) 60%, rgba(10,9,9,0)); }
+.o { position: absolute; z-index: 10; }
+
+/* instant print: warm white frame, deep chin */
+.print { width: var(--w); padding: calc(var(--w) * .055) calc(var(--w) * .055) calc(var(--w) * .2);
+  background: var(--paper); border-radius: 3px; }
+.print img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+.bare { width: var(--w); border-radius: 3px; }
+.bare img { display: block; width: 100%; }
+
+/* light from the upper left: shadows fall down-right */
+.lift  { filter: drop-shadow(10px 16px 14px rgba(0,0,0,.55)) drop-shadow(2px 3px 2px rgba(0,0,0,.4)); }
+.lift2 { filter: drop-shadow(18px 26px 22px rgba(0,0,0,.6)) drop-shadow(3px 5px 3px rgba(0,0,0,.45)); }
+
+.eyebrow { font-family: VCR; color: var(--orange); text-shadow: 0 1px 3px rgba(0,0,0,.95), 0 0 14px rgba(0,0,0,.8); letter-spacing: .18em; text-transform: uppercase; font-size: 18px; }
+.headline { font-family: VCR; color: #fff; text-transform: uppercase; line-height: 1.02; letter-spacing: .01em;
+  text-shadow: 0 2px 18px rgba(0,0,0,.6); }
+.headline .hot { color: var(--orange); }
+.stamp { font-family: VCR; color: var(--orange); letter-spacing: .06em;
+  text-shadow: 0 0 6px rgba(255,140,0,.75), 0 0 18px rgba(255,120,0,.45); }
+/* a light leak washed over the whole desk */
+.leak { position: absolute; inset: 0; z-index: 40; pointer-events: none; mix-blend-mode: screen; opacity: .35;
+  background-size: cover; }
+/* the film's name, written in the print's chin */
+.print .label, .bare .label { position: absolute; left: 0; right: 0; text-align: center; font-family: VCR;
+  color: #3b342d; letter-spacing: .08em; text-transform: uppercase; }
+.print .label { bottom: calc(var(--w) * .065); font-size: calc(var(--w) * .07); }
+.bare .label { bottom: calc(var(--w) * .07); font-size: calc(var(--w) * .07); }

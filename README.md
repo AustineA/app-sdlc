@@ -13,6 +13,7 @@ It starts with an audit of the project and skips every phase that's already done
 5. Push: APNs and FCM, with a backend dispatcher for each platform
 6. Localization: one string catalog, with Android strings generated from it
 7. Store screenshots for every locale (FrameCraft), reused for Play with a 2:1 crop
+   - 7b. iOS 27 creative assets: product page header and search results video, built from real app output, uploaded to the Asset Library
 8. Landing site and legal pages that name every platform and data processor, deployed to Cloudflare
 9. Store listings and policy forms: App Store Connect, the Play listing through the API, and the Play app-content declarations
 10. Release: a TestFlight build, and a Play internal-track draft
