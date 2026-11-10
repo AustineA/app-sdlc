@@ -5,7 +5,7 @@
 #   setup.sh --install             install whatever is missing (all groups)
 #   setup.sh --install ios android screenshots landing   only these groups
 #
-# Groups: core, ios, android, device, screenshots, landing, store
+# Groups: core, ios, android, device, screenshots, landing, store, video
 # Everything comes from its official source. Global installs go through brew, npx, pip --user
 # or a git clone into ~/.agents/skills. Xcode and Android Studio can't be scripted; they're reported.
 set -u
@@ -18,7 +18,7 @@ for arg in "$@"; do
     *) SELECTED+=("$arg") ;;
   esac
 done
-[ ${#SELECTED[@]} -eq 0 ] && SELECTED=(core ios android device screenshots landing store)
+[ ${#SELECTED[@]} -eq 0 ] && SELECTED=(core ios android device screenshots landing store video)
 want() { local g; for g in "${SELECTED[@]}"; do [ "$g" = "$1" ] && return 0; done; return 1; }
 
 MISSING=0
@@ -110,6 +110,11 @@ if want store; then
   tool "asc-locale skill (App Store metadata/screenshots)" "skill_installed asc-locale" "npx -y github:AustineA/asc-locale"
   tool "testflight-upload skill" "skill_installed testflight-upload" "npx -y github:AustineA/testflight-upload"
   tool "play-store-publisher skill" "skill_installed play-store-publisher" "npx -y github:AustineA/play-store-publisher"
+fi
+
+if want video; then
+  echo "video"
+  tool "app-release-motion-video skill (launch video, phase 11)" "skill_installed app-release-motion-video" "npx -y github:AustineA/app-release-motion-video"
 fi
 
 echo

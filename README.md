@@ -17,6 +17,7 @@ It starts with an audit of the project and skips every phase that's already done
 8. Landing site and legal pages that name every platform and data processor, deployed to Cloudflare
 9. Store listings and policy forms: App Store Connect, the Play listing through the API, and the Play app-content declarations
 10. Release: a TestFlight build, and a Play internal-track draft
+11. Launch video, only when asked: a cinematic promo, USP film or release reel (the `app-release-motion-video` skill)
 
 The audit also flags hygiene problems before any phase starts: secrets committed to git, debug-signed release builds, unused sensitive permissions, and SDKs the privacy policy doesn't mention.
 
@@ -49,6 +50,7 @@ bash ~/.agents/skills/app-sdlc/scripts/setup.sh --install ios screenshots store 
 | [asc-locale](https://github.com/AustineA/asc-locale) | App Store metadata and localization | `npx github:AustineA/asc-locale` |
 | [testflight-upload](https://github.com/AustineA/testflight-upload) | archive and upload to TestFlight | `npx github:AustineA/testflight-upload` |
 | [play-store-publisher](https://github.com/AustineA/play-store-publisher) | Play listings, bundles and tracks | `npx github:AustineA/play-store-publisher` |
+| [app-release-motion-video](https://github.com/AustineA/app-release-motion-video) | launch video, when asked: cinematic promo, USP film or release reel | `npx github:AustineA/app-release-motion-video` |
 | [aso-appstore-screenshots](https://github.com/adamlyttleapps/claude-skill-aso-appstore-screenshots) | screenshot headlines | git clone |
 | [XcodeBuildMCP](https://github.com/getsentry/XcodeBuildMCP) | iOS build/run/test | `brew tap getsentry/xcodebuildmcp && brew install xcodebuildmcp` |
 | fastlane, XcodeGen, gh, libraqm, Python libs | builds, uploads, image text | Homebrew / pip |

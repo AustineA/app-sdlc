@@ -1,6 +1,6 @@
 ---
 name: app-sdlc
-description: End-to-end orchestrator that takes a mobile app (native iOS, native Android, Expo/React Native or Flutter) from "code exists" to "builds on TestFlight and the Play internal track", including porting it to the missing platform. It audits the project first, skips every phase that's already done, and only moves on after each phase passes a verification gate. Phases are platform port with feature-by-feature e2e QA; Sign in with Apple/Google with cross-platform account linking; subscriptions (App Store Connect, Google Play, RevenueCat); push (APNs, FCM); localization; store screenshots for every locale; landing site and legal pages on Cloudflare; App Store and Play listings and policy forms; then the release. Use this whenever the user wants to "ship", "launch", "get the app to the stores", "port to Android/iOS", "do everything needed to publish", "finish the release setup", or asks what's missing before a store launch, even if they name only one or two of these pieces.
+description: End-to-end orchestrator that takes a mobile app (native iOS, native Android, Expo/React Native or Flutter) from "code exists" to "builds on TestFlight and the Play internal track", including porting it to the missing platform. It audits the project first, skips every phase that's already done, and only moves on after each phase passes a verification gate. Phases are platform port with feature-by-feature e2e QA; Sign in with Apple/Google with cross-platform account linking; subscriptions (App Store Connect, Google Play, RevenueCat); push (APNs, FCM); localization; store screenshots for every locale; landing site and legal pages on Cloudflare; App Store and Play listings and policy forms; then the release; and, when asked, a launch video (cinematic promo, USP film or release reel). Use this whenever the user wants to "ship", "launch", "get the app to the stores", "port to Android/iOS", "do everything needed to publish", "finish the release setup", or asks what's missing before a store launch, even if they name only one or two of these pieces.
 ---
 
 # App SDLC orchestrator
@@ -9,7 +9,7 @@ This skill runs the whole path from an app in a repo to builds that testers can 
 
 You are the orchestrator. Most phases have a specialist skill; your job is to sequence them, detect what already exists, hold each phase to its verification gate, and keep a written record so a later session can resume.
 
-**Specialist skills come from `setup.sh`, and they're optional.** This skill names helpers by role, among them `testflight-upload`, `play-store-publisher`, `framecraft-layer-design`, `aso-appstore-screenshots`, `asc-locale` / `appstore-metadata`, `app-landing-seo`, and an emulator or simulator driver such as Argent or XcodeBuildMCP. Use whichever of them is installed. When one is missing, do the step directly by following the phase's reference file and the scripts in `scripts/`. Every phase can be done without them.
+**Specialist skills come from `setup.sh`, and they're optional.** This skill names helpers by role, among them `testflight-upload`, `play-store-publisher`, `framecraft-layer-design`, `aso-appstore-screenshots`, `asc-locale` / `appstore-metadata`, `app-landing-seo`, `app-release-motion-video`, and an emulator or simulator driver such as Argent or XcodeBuildMCP. Use whichever of them is installed. When one is missing, do the step directly by following the phase's reference file and the scripts in `scripts/`. Every phase can be done without them.
 
 ## Operating principles
 
@@ -191,6 +191,14 @@ Run them in this order. Each section lists what it **detects** (to skip it), wha
 - **Before any production release:** roll the build out on internal testing first. Install that exact AAB on an emulator (`bundletool build-apks --connected-device`, then `install-apks`), and compare the app drawer icon with the live listing icon (`scripts/icon_check.py`). Send the build and any listing-icon change for review together.
 - **If Play rejects it:** read Policy status → View details (the location and evidence image) **and** Submission activity → the submission (which release was reviewed) before changing anything. A rejected change goes back to "not yet submitted", so it looks unsent. See "Reading a rejection" in `references/app-icon.md`.
 - **Verify:** the build is VALID in TestFlight, and the version code is on the internal track as a draft.
+
+### 11. Launch video (only when asked)
+- **Detect:** the request mentions a launch video, promo, reel, trailer or launch materials; a motion project (`comp.js` + `index.html`) with a rendered film already in the repo. Otherwise mark the phase `skipped` and name it in the final report as available.
+- **Do:**
+  - Use the `app-release-motion-video` skill and pick the kind from the ask: a **cinematic promo** for a launch on X, Reels or TikTok (the real app recorded on the simulator and played on a phone in a 3D table scene; read that skill's `references/cinematic-promo.md` first), a landscape USP film for the site hero or YouTube, or a short release reel for an update.
+  - Reuse what earlier phases made: the demo data and captures from phase 7, the approved headline copy, the brand tokens from the landing site.
+  - Only UI that exists in the shipped build, and no generated footage. Music and foley spend the user's balance, so price them with a dry run first.
+- **Verify:** the stills contact sheet and frames pulled from the encoded file were reviewed; the film, `cover.jpg` and the project folder are handed over, with a plain note that the audio wasn't heard. Never post it anywhere.
 
 ## Things only the user can do
 

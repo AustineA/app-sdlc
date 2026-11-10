@@ -22,6 +22,7 @@
 | store | `asc-locale` skill | App Store metadata, localization, screenshots upload | `npx -y github:AustineA/asc-locale` |
 | store | `testflight-upload` skill | archive, export, upload, poll VALID | `npx -y github:AustineA/testflight-upload` |
 | store | `play-store-publisher` skill | Play listings, AAB upload, tracks | `npx -y github:AustineA/play-store-publisher` |
+| video | `app-release-motion-video` skill | launch video (phase 11, only when asked) | `npx -y github:AustineA/app-release-motion-video` |
 
 The AustineA installers put each skill in `~/.agents/skills/<name>` and symlink it into Claude Code, Codex, Cursor, Windsurf, Antigravity, Trae and Amp. A skill that an agent already has as a real folder is left alone.
 
