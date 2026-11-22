@@ -30,9 +30,18 @@ npx github:AustineA/app-sdlc
 This copies the skill to `~/.agents/skills/app-sdlc/` and symlinks it into any Claude Code, Codex, Cursor, Windsurf, Antigravity, Trae or Amp installation it finds.
 
 ```bash
+npx github:AustineA/app-sdlc update
 npx github:AustineA/app-sdlc status
 npx github:AustineA/app-sdlc uninstall
 ```
+
+### Updating
+
+```bash
+npx github:AustineA/app-sdlc update
+```
+
+It compares the latest commit on GitHub with the one recorded at install time. If yours is older, it clones the latest version and installs it. The installed copy is replaced, not merged, so files removed from the skill don't linger. Restart your agent afterwards.
 
 Then install the tools and companion skills it drives. The agent also runs this check itself at the start of a run:
 
