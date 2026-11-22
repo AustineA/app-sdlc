@@ -18,6 +18,7 @@
 | screenshots | `aso-appstore-screenshots` skill | benefit-led headlines | cloned from github.com/adamlyttleapps/claude-skill-aso-appstore-screenshots |
 | screenshots | libraqm | Arabic/Devanagari shaping in Pillow | `brew install libraqm` |
 | landing | `app-landing-seo` skill (+ `gpt-image`) | landing site, guides, SEO | `npx -y github:AustineA/app-landing-seo` |
+| photos | `editorial-ig-photos` skill (+ Sume MCP) | IG-ready photos for demo content, screenshots, landing, launch and social posts | local skill in `~/.agents/skills/editorial-ig-photos` |
 | landing | wrangler | Cloudflare deploy | via `npx wrangler` (no install); `npx wrangler login` once |
 | store | `asc-locale` skill | App Store metadata, localization, screenshots upload | `npx -y github:AustineA/asc-locale` |
 | store | `testflight-upload` skill | archive, export, upload, poll VALID | `npx -y github:AustineA/testflight-upload` |

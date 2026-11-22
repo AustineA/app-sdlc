@@ -9,7 +9,7 @@ This skill runs the whole path from an app in a repo to builds that testers can 
 
 You are the orchestrator. Most phases have a specialist skill; your job is to sequence them, detect what already exists, hold each phase to its verification gate, and keep a written record so a later session can resume.
 
-**Specialist skills come from `setup.sh`, and they're optional.** This skill names helpers by role, among them `testflight-upload`, `play-store-publisher`, `framecraft-layer-design`, `aso-appstore-screenshots`, `asc-locale` / `appstore-metadata`, `app-landing-seo`, `app-release-motion-video`, and an emulator or simulator driver such as Argent or XcodeBuildMCP. Use whichever of them is installed. When one is missing, do the step directly by following the phase's reference file and the scripts in `scripts/`. Every phase can be done without them.
+**Specialist skills come from `setup.sh`, and they're optional.** This skill names helpers by role, among them `testflight-upload`, `play-store-publisher`, `framecraft-layer-design`, `aso-appstore-screenshots`, `asc-locale` / `appstore-metadata`, `app-landing-seo`, `app-release-motion-video`, `editorial-ig-photos`, and an emulator or simulator driver such as Argent or XcodeBuildMCP. Use whichever of them is installed. When one is missing, do the step directly by following the phase's reference file and the scripts in `scripts/`. Every phase can be done without them.
 
 ## Operating principles
 
@@ -145,7 +145,7 @@ Run them in this order. Each section lists what it **detects** (to skip it), wha
 ### 7. Store screenshots → `references/screenshots.md`
 - **Detect:** FrameCraft project and exports per locale; screenshots already in ASC and Play (read through the APIs).
 - **Do:**
-  - Capture from demo data.
+  - Capture from demo data. When the demo content needs photos (feeds, galleries, templates, profiles), generate them with the `editorial-ig-photos` skill. Don't use stock or default AI images: flat, evenly lit stock realism reads as AI slop in a screenshot.
   - Build the layered set with the `framecraft-layer-design` skill (`aso-appstore-screenshots` for headlines).
   - Export every store locale.
   - For Play, reuse the iOS set cropped to at most 2:1 (Play rejects a long side more than twice the short side).
@@ -164,7 +164,7 @@ Run them in this order. Each section lists what it **detects** (to skip it), wha
 ### 8. Landing site and legal pages → `references/landing-and-legal.md`
 - **Detect:** landing repo or Worker; live URL; privacy, terms, support and delete-account pages; whether those pages name every platform and data processor; locale coverage.
 - **Do:**
-  - Build or extend the site with the `app-landing-seo` skill.
+  - Build or extend the site with the `app-landing-seo` skill. Make any lifestyle or hero photos with `editorial-ig-photos`.
   - Legal pages must cover each platform's sign-in, billing, push provider and cancellation path, account deletion, and every processor. That means every processor the audit found in the app, plus the ones the backend calls. A privacy page that says "we collect no data" while the app ships analytics gets the app rejected.
   - Translate the legal pages into every locale.
   - Deploy with `npx wrangler deploy` (Cloudflare).
@@ -196,7 +196,7 @@ Run them in this order. Each section lists what it **detects** (to skip it), wha
 - **Detect:** the request mentions a launch video, promo, reel, trailer or launch materials; a motion project (`comp.js` + `index.html`) with a rendered film already in the repo. Otherwise mark the phase `skipped` and name it in the final report as available.
 - **Do:**
   - Use the `app-release-motion-video` skill and pick the kind from the ask: a **cinematic promo** for a launch on X, Reels or TikTok (the real app recorded on the simulator and played on a phone in a 3D table scene; read that skill's `references/cinematic-promo.md` first), a landscape USP film for the site hero or YouTube, or a short release reel for an update.
-  - Reuse what earlier phases made: the demo data and captures from phase 7, the approved headline copy, the brand tokens from the landing site.
+  - Reuse what earlier phases made (any new lifestyle photos come from `editorial-ig-photos`): the demo data and captures from phase 7, the approved headline copy, the brand tokens from the landing site.
   - Only UI that exists in the shipped build, and no generated footage. Music and foley spend the user's balance, so price them with a dry run first.
 - **Verify:** the stills contact sheet and frames pulled from the encoded file were reviewed; the film, `cover.jpg` and the project folder are handed over, with a plain note that the audio wasn't heard. Never post it anywhere.
 
