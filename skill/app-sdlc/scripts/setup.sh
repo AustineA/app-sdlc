@@ -102,7 +102,7 @@ fi
 if want landing; then
   echo "landing"
   tool "app-landing-seo skill" "skill_installed app-landing-seo" "npx -y github:AustineA/app-landing-seo"
-  tool "editorial-ig-photos skill (photos)" "skill_installed editorial-ig-photos" "" "local skill: ~/.agents/skills/editorial-ig-photos (generates through the Sume MCP)"
+  tool "editorial-ig-photos skill (photos)" "skill_installed editorial-ig-photos" "npx -y github:AustineA/editorial-ig-photos" "generates through the Sume MCP"
   tool "wrangler (Cloudflare)" "npx -y wrangler --version" "" "runs through npx; log in once with: npx wrangler login"
 fi
 

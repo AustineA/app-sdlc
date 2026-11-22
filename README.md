@@ -56,6 +56,7 @@ bash ~/.agents/skills/app-sdlc/scripts/setup.sh --install ios screenshots store 
 | [Argent](https://www.npmjs.com/package/@swmansion/argent) | drives iOS simulators and Android emulators for e2e QA | `npx @swmansion/argent@latest init -y` |
 | [framecraft](https://github.com/AustineA/framecraft) + `framecraft-layer-design` skill | App Store screenshots in every locale | `npx github:AustineA/framecraft install` |
 | [app-landing-seo](https://github.com/AustineA/app-landing-seo) | landing site and SEO guides | `npx github:AustineA/app-landing-seo` |
+| [editorial-ig-photos](https://github.com/AustineA/editorial-ig-photos) | IG-ready photos for demo content, landing and launch | `npx github:AustineA/editorial-ig-photos` |
 | [asc-locale](https://github.com/AustineA/asc-locale) | App Store metadata and localization | `npx github:AustineA/asc-locale` |
 | [testflight-upload](https://github.com/AustineA/testflight-upload) | archive and upload to TestFlight | `npx github:AustineA/testflight-upload` |
 | [play-store-publisher](https://github.com/AustineA/play-store-publisher) | Play listings, bundles and tracks | `npx github:AustineA/play-store-publisher` |
